@@ -34,22 +34,21 @@ namespace api.Repository
             _context.Stocks.Remove(stockModel);
             await _context.SaveChangesAsync();
             return stockModel;
-
         }
 
-        public Task<List<Stock>> GetAllAsync()
+        public async Task<List<Stock>> GetAllAsync()
         {
-            return _context.Stocks.ToListAsync();
+            return await _context.Stocks.Include(s => s.Comments).ToListAsync();
         }
 
         public async Task<Stock?> GetByIdAsync(int id)
         {
-            return await _context.Stocks.FindAsync(id);
+            return await _context.Stocks.Include(s => s.Comments).FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public async Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto stockDto)
         {
-            var existingStock = await _context.Stocks.FirstOrDefaultAsync(s => s.Id == id);
+            var existingStock = await _context.Stocks.Include(s => s.Comments).FirstOrDefaultAsync(i => i.Id == id);
             if(existingStock == null){
                 return null;
             }
