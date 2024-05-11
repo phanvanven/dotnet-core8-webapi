@@ -32,6 +32,7 @@ namespace api.Repository
             if (stockModel == null){
                 return null;
             }
+            Console.WriteLine("CHECK: ", stockModel);
             _context.Stocks.Remove(stockModel);
             await _context.SaveChangesAsync();
             return stockModel;
@@ -62,6 +63,11 @@ namespace api.Repository
         public async Task<Stock?> GetByIdAsync(int id)
         {
             return await _context.Stocks.Include(s => s.Comments).FirstOrDefaultAsync(i => i.Id == id);
+        }
+
+        public async Task<Stock?> GetBySymbolAsync(string symbol)
+        {
+            return await _context.Stocks.FirstOrDefaultAsync(s => s.Symbol == symbol);
         }
 
         public async Task<bool> StockExists(int id)
